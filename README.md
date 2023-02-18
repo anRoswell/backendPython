@@ -1,6 +1,16 @@
 # backendPython
 
-Instlaar Flask
+Paquetes a utilizar
+
+- flask_pyjwt (https://pypi.org/project/flask-pyjwt/)
+- psycopg2 (https://pypi.org/project/psycopg/)
+- python-dotenv (https://pypi.org/project/python-dotenv/)
+
+// Librerias en core de python a utilizar
+
+- logging => https://docs.python.org/3/library/logging.html
+
+Instalar Flask
 https://flask.palletsprojects.com/en/2.2.x/installation/
 
 Proyecto desarrollador en flask

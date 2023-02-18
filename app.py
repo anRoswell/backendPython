@@ -7,10 +7,16 @@ from flask_pyjwt import AuthManager, current_token, require_token
 
 import psycopg2
 
+app = Flask(__name__)
+app.run(debug=True)
+
+import logging
+file_handler = logging.FileHandler('app.log')
+app.logger.addHandler(file_handler)
+app.logger.setLevel(logging.INFO)
+
 load_dotenv()  # loads variables from .env file into environment
 
-
-app = Flask(__name__)
 url = os.environ.get("DATABASE_URL")  # gets variables from environment
 connection = psycopg2.connect(url) 
 
@@ -21,8 +27,20 @@ app.config["JWT_AUTHMAXAGE"] = 3600
 app.config["JWT_REFRESHMAXAGE"] = 604800
 
 auth_manager = AuthManager(app)
+print(auth_manager)
 
-@app.route("/")
+@app.errorhandler(404)
+def not_found(error=None):
+    message = {
+            'status': 404,
+            'message': 'Not Found: ' + request.url,
+    }
+    resp = jsonify(message)
+    resp.status_code = 404
+
+    return resp
+
+@app.route("/", methods=['GET'])
 # @require_token()
 def get_Data():
     registro = []
@@ -36,7 +54,43 @@ def get_Data():
     # Cerramos la conexión
     return registro
 
-@app.route("/nodos")
+@app.route("/waterPotability", methods=['GET'])
+# @require_token()
+def get_waterPotability():
+    registro = []
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT ph, hardness, solids, chloramines, sulfate, conductivity, organic_carbon, trihalomethanes, turbidity, potability FROM public.water_potability")
+            registro = cursor.fetchall()
+
+    print(registro)
+
+    # Cerramos la conexión
+    return registro
+
+@app.route("/water", methods=['GET'])
+def get_water():
+    conexion = psycopg2.connect("dbname=postgres user=postgres password=12345678")
+    # Creamos el cursor con el objeto conexion
+    cur = conexion.cursor()
+
+    # Ejecutamos una consulta
+    cur.execute( "SELECT ph, hardness, solids, chloramines, sulfate, conductivity, organic_carbon, trihalomethanes, turbidity, potability FROM public.water_potability" )
+
+    for ph, hardness, solids, chloramines, sulfate, conductivity, organic_carbon, trihalomethanes, turbidity, potability in cur.fetchall() :
+        print('ph: ', ph, 'hardness: ', hardness, 'solids: ', solids)
+
+    # Recorremos los resultados y los mostramos
+    registro = cur.fetchall()    
+    print(registro)
+
+    # Cierre de la comunicación con PostgreSQL
+    cur.close()
+    # Cerramos la conexión
+    conexion.close()
+    return json.dumps(registro)
+
+@app.route("/nodos", methods=['GET'])
 # @require_token()
 def get_nodos():
     conexion = psycopg2.connect("dbname=IoT user=postgres password=12345678")
@@ -59,7 +113,7 @@ def get_nodos():
     conexion.close()
     return json.dumps(registro)
 
-@app.route("/logs")
+@app.route("/logs", methods=['GET'])
 @require_token()
 def get_logs():
     conexion = psycopg2.connect("dbname=IoT user=postgres password=12345678")
@@ -81,3 +135,32 @@ def get_logs():
     # Cerramos la conexión
     conexion.close()
     return json.dumps(registro)
+
+# @app.route('/login', methods=['POST'])
+@app.route('/login', methods=['GET'])
+def do_admin_login():
+    # if request.form['password'] == 'password' and request.form['username'] == 'admin':
+    #     session['logged_in'] = True
+    # else:
+    #     return not_found()
+    
+    return jsonify({'response': 'wrong password'})
+
+# Create auth and refresh tokens with the auth_manager object
+# @app.route("/login")
+# def post_token():
+#     username = request.form["username"]
+#     password = request.form["password"]
+
+#     return {
+#         "auth_token": auth_token.signed,
+#         "refresh_token": refresh_token.signed
+#     }, 200
+
+@app.route('/hello', methods = ['GET'])
+def api_hello():
+    app.logger.info('informing')
+    app.logger.warning('warning')
+    app.logger.error('screaming bloody murder!')
+    
+    return "check your logs\n"
