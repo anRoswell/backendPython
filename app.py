@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_pyjwt import AuthManager, current_token, require_token
+from datetime import datetime
 
 from psycopg2.extras import Json
 import psycopg2
@@ -68,7 +69,7 @@ def saveStoreProcedure():
         sensores = ''
         print(opcion)
         sensores = {
-            "fecha_hora": '',
+            "fecha_hora": datetime.today(),
             "tipo": 'ph',
             "valor": '001'
         }
