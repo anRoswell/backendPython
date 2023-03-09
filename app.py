@@ -69,7 +69,7 @@ def saveStoreProcedure():
         sensores = ''
         print(opcion)
         sensores = {
-            "fecha_hora": datetime.today(),
+            "fecha_hora": str(datetime.today()),
             "tipo": 'ph',
             "valor": '001'
         }
