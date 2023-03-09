@@ -61,28 +61,36 @@ def callStoreProcedure():
 
 @app.route("/saveInStoreProcedure", methods=['POST'])
 def saveStoreProcedure():
-    # opcion = request.form.get('opcion')
-    opcion = 'REGISTRAR'
-    sensores = ''
-    print(opcion)
-    sensores = {
-        "fecha_hora": '',
-        "tipo": 'ph',
-        "valor": '001'
-    }
-    sensores = repr(sensores)
+    try:
+        # opcion = request.form.get('opcion')
+        opcion = 'REGISTRAR'
+        sensores = ''
+        print(opcion)
+        sensores = {
+            "fecha_hora": '',
+            "tipo": 'ph',
+            "valor": '001'
+        }
+        sensores = repr(sensores)
 
-    print(sensores)
-    response = []
-    with connection:
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT procesos.sp_sensores(%s, %s)", [opcion, sensores])
-            response = cursor.fetchall()
+        print(sensores)
+        response = []
+        with connection:
+            with connection.cursor() as cursor:
+                cursor.callproc("SELECT procesos.sp_sensores(%s, %s)", [opcion, sensores])
+                response = cursor.fetchall()
 
-    print(response)
-
-    # Cerramos la conexión
-    return response 
+        print(response)
+         # Cerramos la conexión
+        return response 
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+        # closing database connection.
+        if connection:
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")
 
 @app.route("/waterPotability", methods=['GET'])
 # @require_token()
