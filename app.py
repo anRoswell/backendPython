@@ -59,6 +59,26 @@ def callStoreProcedure():
     # Cerramos la conexión
     return registro 
 
+@app.route("/saveInStoreProcedure", methods=['POST'])
+def saveStoreProcedure():
+    data = []
+    opcion = request.form['opcion']
+    sensores = {
+        "fecha_hora": '',
+        "tipo": 'ph',
+        "valor": '001'
+    }
+    response = []
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT procesos.sp_sensores('%s', '%s')", [opcion, sensores])
+            response = cursor.fetchall()
+
+    print(response)
+
+    # Cerramos la conexión
+    return response 
+
 @app.route("/waterPotability", methods=['GET'])
 # @require_token()
 def get_waterPotability():
