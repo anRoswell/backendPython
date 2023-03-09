@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_pyjwt import AuthManager, current_token, require_token
 
+from psycopg2.extras import Json
 import psycopg2
 
 app = Flask(__name__)
@@ -71,7 +72,7 @@ def saveStoreProcedure():
             "tipo": 'ph',
             "valor": '001'
         }
-        sensores = repr(sensores)
+        sensores = Json(sensores)
 
         print(sensores)
 
