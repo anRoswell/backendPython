@@ -61,14 +61,16 @@ def callStoreProcedure():
 
 @app.route("/saveInStoreProcedure", methods=['POST'])
 def saveStoreProcedure():
-    data = []
     opcion = ''
     opcion = request.form.get('opcion')
+    print(opcion)
     sensores = {
         "fecha_hora": '',
         "tipo": 'ph',
         "valor": '001'
     }
+    sensores = str(sensores)
+    print(sensores)
     response = []
     with connection:
         with connection.cursor() as cursor:
