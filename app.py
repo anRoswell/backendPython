@@ -43,16 +43,21 @@ def not_found(error=None):
 @app.route("/", methods=['GET'])
 # @require_token()
 def get_Data():
+    # Cerramos la conexión
+    return "Ok conectados!!!"
+
+@app.route("/storeprocedure", methods=['GET'])
+def callStoreProcedure():
     registro = []
     with connection:
         with connection.cursor() as cursor:
-            cursor.execute("SELECT id, idnodo FROM nodo.data")
+            cursor.execute("SELECT procesos.sp_sensores('LISTAR', '')")
             registro = cursor.fetchall()
 
     print(registro)
 
     # Cerramos la conexión
-    return registro
+    return registro 
 
 @app.route("/waterPotability", methods=['GET'])
 # @require_token()
