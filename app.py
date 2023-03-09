@@ -88,11 +88,14 @@ def saveStoreProcedure():
             print("Null  = ", row[3])
             
         print(result)
+        connection.commit()
+        print("Transaction completed successfully ")
 
          # Cerramos la conexión
         return result 
     except (Exception, psycopg2.DatabaseError) as error:
         print("Error while connecting to PostgreSQL", error)
+        connection.rollback()
     finally:
         # closing database connection.
         if connection:
