@@ -65,12 +65,12 @@ def saveStoreProcedure():
     opcion = 'REGISTRAR'
     sensores = ''
     print(opcion)
-    # sensores = {
-    #     "fecha_hora": '',
-    #     "tipo": 'ph',
-    #     "valor": '001'
-    # }
-    # sensores = str(sensores)
+    sensores = {
+        "fecha_hora": '',
+        "tipo": 'ph',
+        "valor": '001'
+    }
+    sensores = repr(sensores)
 
     print(sensores)
     response = []
