@@ -74,15 +74,21 @@ def saveStoreProcedure():
         sensores = repr(sensores)
 
         print(sensores)
-        response = []
-        with connection:
-            with connection.cursor() as cursor:
-                cursor.callproc("procesos.sp_sensores", [opcion, sensores])
-                response = cursor.fetchall()
 
-        print(response)
+        cursor = connection.cursor()
+        cursor.callproc("procesos.sp_sensores", [opcion, sensores])
+        result = cursor.fetchall()
+
+        for row in result:
+            print("Estado = ", row[0], )
+            print("Mensaje = ", row[1])
+            print("Datos  = ", row[2])
+            print("Null  = ", row[3])
+            
+        print(result)
+
          # Cerramos la conexión
-        return response 
+        return result 
     except (Exception, psycopg2.DatabaseError) as error:
         print("Error while connecting to PostgreSQL", error)
     finally:
