@@ -77,7 +77,7 @@ def saveStoreProcedure():
         response = []
         with connection:
             with connection.cursor() as cursor:
-                cursor.callproc("SELECT procesos.sp_sensores(%s, %s)", [opcion, sensores])
+                cursor.callproc("procesos.sp_sensores", [opcion, sensores])
                 response = cursor.fetchall()
 
         print(response)
