@@ -6,6 +6,8 @@ from flask import Flask, jsonify, request
 from flask_pyjwt import AuthManager, current_token, require_token
 from datetime import datetime
 
+import paho.mqtt.client as mqtt
+
 from psycopg2.extras import Json
 import psycopg2
 
@@ -213,3 +215,18 @@ def api_hello():
     app.logger.error('screaming bloody murder!')
     
     return "check your logs\n"
+
+def on_connect(client, userdata, flags, rc):
+    print("Connected with result code "+str(rc))
+    client.subscribe("+/devices/+/up")
+
+    client = mqtt.Client()
+    client.username_pw_set("<TTN_APP_ID>", "<TTN_ACCESS_KEY>")
+    client.on_connect = on_connect
+    client.connect("eu.thethings.network", 1883, 60)
+    def on_message(client, userdata, msg):
+        print(msg.topic+" "+str(msg.payload))
+
+    client.on_message = on_message
+
+    client.loop_forever()
